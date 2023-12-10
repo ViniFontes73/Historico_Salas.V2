@@ -1,13 +1,14 @@
 package com.example.springboot.models;
 
 import jakarta.persistence.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serializable;
 import java.util.UUID;
 
 @Entity
 @Table(name = "tb_sala")
-public class SalaModel  implements Serializable {
+public class SalaModel extends RepresentationModel<SalaModel> implements Serializable {   // aqui vai ter Hateos para navegação
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -32,11 +33,11 @@ public class SalaModel  implements Serializable {
         this.nome = nome;
     }
 
-    public String getBloco() {
-        return bloco;
-    }
-
     public void setBloco(String bloco) {
         this.bloco = bloco;
     }
+
+
+
+
 }

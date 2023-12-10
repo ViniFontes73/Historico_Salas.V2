@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 public class SalaController {
 
@@ -30,7 +33,14 @@ public class SalaController {
 
     @GetMapping("/salas")
     public ResponseEntity<List<SalaModel>> getAllSalas() {
-        return ResponseEntity.status(HttpStatus.OK).body(salaRepository.findAll());
+        List<SalaModel> salasList = salaRepository.findAll();
+        if (!salasList.isEmpty()){
+            for (SalaModel sala : salasList) {
+                UUID id = sala.getId();
+                sala.add(linkTo(methodOn(SalaController.class).getOneSala(id)).withSelfRel());
+            }
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(salasList);
     }
 
     @GetMapping("/salas/{id}")
@@ -39,6 +49,7 @@ public class SalaController {
         if (salaO.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sala não encontrada.");
         }
+        salaO.get().add(linkTo(methodOn(SalaController.class).getAllSalas()).withRel("Lista de salas"));
         return ResponseEntity.status(HttpStatus.OK).body(salaO.get());
     }
 
